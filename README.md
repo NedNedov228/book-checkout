@@ -15,8 +15,8 @@ This is a simple CRUD web application for managing book checkouts in a library. 
 - **Spring Boot**: Backend framework
 - **Maven**: Dependency management
 - **Thymeleaf**: Template engine for the frontend
-- **PostGres Database**: In-memory database for development and testing
-- **Spring Data JPA**: ORM for database operations
+- **PostgreSQL Database**: open-source relational database 
+
 
 ## Getting Started
 
@@ -24,26 +24,6 @@ This is a simple CRUD web application for managing book checkouts in a library. 
 
 - JDK 11 or higher
 - Maven 3.6.0 or higher
-
-### Installation
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/yourusername/library-book-checkout.git
-    cd library-book-checkout
-    ```
-
-2. Build the project using Maven:
-    ```bash
-    mvn clean install
-    ```
-
-3. Run the application:
-    ```bash
-    mvn spring-boot:run
-    ```
-
-4. Access the application at `http://localhost:8080`.
 
 ### Configuration
 
