@@ -2,49 +2,69 @@ package com.xecore.projects.book_checkout.dao;
 
 import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
+import jakarta.transaction.Transactional;
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.hibernate.SessionFactory;
 
 import java.util.List;
 
 @Component
 public class PersonDAO {
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
 
     @Autowired
-    public PersonDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public PersonDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
+    @Transactional
     public List<Person> findAllPeople() {
-        return jdbcTemplate.query("SELECT * FROM Person", new BeanPropertyRowMapper<>(Person.class));
-    }
+        Session session = sessionFactory.getCurrentSession();
 
+        List<Person> people = session.createQuery("select p from Person p",Person.class)
+                .getResultList();
+
+        return people;
+    }
+    @Transactional
     public void save(Person person) {
-        jdbcTemplate.update("INSERT INTO Person(SNP,birth_year,email) VALUES (?,?,?)",
-                person.getSNP(),person.getBirth_year(),person.getEmail());
+        Session session = sessionFactory.getCurrentSession();
+        session.save(person);
     }
-
+    @Transactional
     public Person findPerson(int id){
-     return jdbcTemplate.query("SELECT * FROM Person WHERE user_id=?",new Object[]{id},new BeanPropertyRowMapper<>(Person.class))
-             .stream().findAny().orElse(null);
-    }
+        Session session = sessionFactory.getCurrentSession();
+        Person person = (Person) session.get(Person.class, id);
 
+        return person;
+    }
+    @Transactional
     public void update(int id,Person updatedPerson) {
+        Session session = sessionFactory.getCurrentSession();
+        Person person = (Person) session.get(Person.class, id);
 
-        jdbcTemplate.update("UPDATE Person SET SNP=?,birth_year=?,email=? WHERE user_id=?",
-                updatedPerson.getSNP(),updatedPerson.getBirth_year(),updatedPerson.getEmail(),id);
+        person.setSNP(updatedPerson.getSNP());
+        person.setEmail(updatedPerson.getEmail());
+        person.setBirth_year(updatedPerson.getBirth_year());
+
     }
-
+    @Transactional
     public void delete(int id) {
-        jdbcTemplate.update("DELETE FROM Person WHERE user_id=?",id);
+        Session session = sessionFactory.getCurrentSession();
+        Person person = (Person) session.get(Person.class, id);
+        session.delete(person);
     }
-
+    @Transactional
     public List<Book> getAllReservedBooks(int id){
+    Session session = sessionFactory.getCurrentSession();
 
-        return jdbcTemplate.query("SELECT Book.title,Person.user_id FROM Person JOIN Book ON Person.user_id = Book.user_id WHERE Person.user_id=?",new Object[]{id},new BeanPropertyRowMapper<>(Book.class));
+    Person person = (Person) session.get(Person.class, id);
+        Hibernate.initialize(person.getBooks());
+
+    return person.getBooks();
     }
 
 

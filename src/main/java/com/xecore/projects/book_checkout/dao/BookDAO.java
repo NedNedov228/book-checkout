@@ -2,59 +2,91 @@ package com.xecore.projects.book_checkout.dao;
 
 import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
+
+import org.hibernate.Hibernate;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+//import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Component
 public class BookDAO {
 
-    private final JdbcTemplate jdbcTemplate;
+    private final SessionFactory sessionFactory;
 
     @Autowired
-    public BookDAO(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public BookDAO( SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
+    @Transactional(readOnly = true)
     public List<Book> findAllBooks() {
-        return jdbcTemplate.query("SELECT * FROM Book", new BeanPropertyRowMapper<>(Book.class));
+        Session session = sessionFactory.getCurrentSession();
+
+        return session.createQuery("from Book").getResultList();
+
     }
 
+    @Transactional
     public void save(Book book) {
-        jdbcTemplate.update("INSERT INTO Book(title,author_name,year) VALUES (?,?,?)",
-                book.getTitle(),book.getAuthor_name(),book.getYear());
+        Session session = sessionFactory.getCurrentSession();
+        session.saveOrUpdate(book);
     }
 
+    @Transactional(readOnly = true)
     public Book findBook(int id){
-        return jdbcTemplate.query("SELECT * FROM Book WHERE book_id=?",new Object[]{id},new BeanPropertyRowMapper<>(Book.class))
-                .stream().findAny().orElse(null);
+        Session session = sessionFactory.getCurrentSession();
+        Book b = session.get(Book.class, id);
+
+        return b;
     }
 
+    @Transactional
     public void update(int id,Book updatedBook) {
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
 
-        jdbcTemplate.update("UPDATE Book SET title=?,author_name=?,year=? WHERE book_id=?",
-                updatedBook.getTitle(),updatedBook.getAuthor_name(),updatedBook.getYear(),id);
+        book.setTitle(updatedBook.getTitle());
+        book.setAuthor_name(updatedBook.getAuthor_name());
+        book.setYear(updatedBook.getYear());
     }
 
+    @Transactional
     public void delete(int id) {
-        jdbcTemplate.update("DELETE FROM Book WHERE book_id=?",id);
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
+        session.delete(book);
     }
 
+    @Transactional(readOnly = true)
     public Person findOwner(int id) {
-        return jdbcTemplate.query("select * from Person join Book on Person.user_id = Book.user_id WHERE Book.book_id=?",new Object[]{id},new BeanPropertyRowMapper<>(Person.class)).
-                stream().findAny().orElse(null);
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
+
+        Hibernate.initialize(book.getOwner());
+        return book.getOwner();
 
     }
 
+    @Transactional
     public void deleteReservation(int id) {
-        jdbcTemplate.update("UPDATE Book SET user_id=null WHERE book_id=?", id);
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, id);
+
+        book.setOwner(null);
     }
 
+    @Transactional
     public void addReservation(int book_id,int user_id) {
-        jdbcTemplate.update("UPDATE Book SET user_id=? WHERE book_id=?", user_id,book_id);
+        Session session = sessionFactory.getCurrentSession();
+        Book book = session.get(Book.class, book_id);
+        Person user = session.get(Person.class, user_id);
+
+        book.setOwner(user);
     }
 
 }

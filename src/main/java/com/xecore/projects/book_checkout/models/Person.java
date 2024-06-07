@@ -1,20 +1,36 @@
 package com.xecore.projects.book_checkout.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name="Person")
 public class Person {
+
+    @Id
+    @Column(name="user_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int user_id;
 
     @Size(min = 10, max = 255)
+    @Column(name="snp")
     @Pattern(regexp = "[A-Z][a-zA-Z]+ [A-Z][a-zA-Z]+ [A-Z][a-zA-Z]+" , message = "Incorrect format (S.N.P.)")
     private String SNP;
 
 //    @NotEmpty(message = "E-mail should not be empty")
+    @Column(name="birth_year")
     @Min(value=1900)
     private int birth_year;
 
     @Email
+    @Column(name = "email")
     private String email;
+
+    @OneToMany(mappedBy = "owner")
+    private List<Book> books = new ArrayList<>();
 
     public Person() {}
 
@@ -58,5 +74,11 @@ public class Person {
         this.user_id = user_id;
     }
 
+    public List<Book> getBooks() {
+        return books;
+    }
 
+    public void setBooks(List<Book> books) {
+        this.books = books;
+    }
 }
