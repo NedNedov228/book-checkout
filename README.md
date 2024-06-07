@@ -12,10 +12,12 @@ This is a simple CRUD web application for managing book checkouts in a library. 
 
 ## Technologies Used
 
-- **Spring Boot**: Backend framework
+- **Spring 6**: Backend framework
+- **Hibernate 6**: Object-Relational Mapping 
 - **Maven**: Dependency management
 - **Thymeleaf**: Template engine for the frontend
-- **PostgreSQL Database**: open-source relational database 
+- **PostgreSQL Database**: open-source relational database
+  
 
 
 ## Getting Started
@@ -27,12 +29,16 @@ This is a simple CRUD web application for managing book checkouts in a library. 
 
 ### Configuration
 
-You can configure the database settings in the `database.properties` file located in the `src/main/resources` directory. Example:
+You can configure the database and hibernate settings in the `hibernate.properties` file located in the `src/main/resources` directory. Example:
 
 ```properties
-driver=org.postgresql.Driver
-url=jdbc:postgresql://localhost:5432/book_checkout
-username=postgres
-password=posgres
+hibernate.driver_class=org.postgresql.Driver
+hibernate.connection.url=jdbc:postgresql://localhost:5432/book_checkout
+hibernate.connection.username=postgres
+hibernate.connection.password=posgres
+
+hibernate.dialect=org.hibernate.dialect.PostGreSQLDialect
+hibernate.show_sql=true
+hibernate.current_session_context_class=thread
 
 ```
