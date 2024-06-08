@@ -27,7 +27,7 @@ public class Book {
 
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)  //TODO: Make app working with FetchType.LAZY
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")
     private Person owner;
 
@@ -77,5 +77,16 @@ public class Book {
 
     public void setOwner(Person owner) {
         this.owner = owner;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "book_id=" + book_id +
+                ", title='" + title + '\'' +
+                ", author_name='" + author_name + '\'' +
+                ", year=" + year +
+                ", owner=" + owner +
+                '}';
     }
 }

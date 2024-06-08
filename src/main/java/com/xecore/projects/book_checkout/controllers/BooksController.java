@@ -1,9 +1,9 @@
 package com.xecore.projects.book_checkout.controllers;
 
-import com.xecore.projects.book_checkout.dao.BookDAO;
-import com.xecore.projects.book_checkout.dao.PersonDAO;
 import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
+import com.xecore.projects.book_checkout.services.BooksService;
+import com.xecore.projects.book_checkout.services.PeopleService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,27 +15,31 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/books")
 public class BooksController {
 
-    private final BookDAO bookDAO;
-    private final PersonDAO personDAO;
+    private final BooksService booksService;
+    private final PeopleService peopleService;
 
     @Autowired
-    public BooksController(BookDAO bookDAO, PersonDAO personDAO) {
-        this.bookDAO = bookDAO;
-        this.personDAO = personDAO;
+    public BooksController(BooksService booksService, PeopleService peopleService) {
+        this.booksService = booksService;
+        this.peopleService = peopleService;
     }
 
     @GetMapping()
     public String index(Model model) {
-        model.addAttribute("books",bookDAO.findAllBooks());
+        model.addAttribute("books",booksService.findAllBooks());
 
         return "books/index";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") Integer id, @ModelAttribute("person") Person person, Model model) {
-        model.addAttribute(bookDAO.findBook(id));
-        model.addAttribute("owner",bookDAO.findOwner(id));
-        model.addAttribute("people",personDAO.findAllPeople());
+        Book book = booksService.findBook(id);
+        Person owner = book.getOwner();
+        System.out.println(book);
+        model.addAttribute(book);
+        model.addAttribute("owner",owner);
+        model.addAttribute("people",peopleService.findAllPeople());
+
         return "books/show";
     }
 
@@ -54,13 +58,13 @@ public class BooksController {
             return "books/new";
         }
 
-        bookDAO.save(book);
+        booksService.save(book);
         return "redirect:/books";
     }
 
     @GetMapping("/{id}/edit")
     public String edit(@PathVariable("id") Integer id, Model model) {
-        model.addAttribute(bookDAO.findBook(id));
+        model.addAttribute(booksService.findBook(id));
 
         return "books/edit";
     }
@@ -72,26 +76,26 @@ public class BooksController {
             return "books/edit";
         }
 
-        bookDAO.update(id,book);
+        booksService.update(id,book);
         return "redirect:/books";
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id") Integer id) {
-        bookDAO.delete(id);
+        booksService.delete(booksService.findBook(id));
         return "redirect:/books";
     }
 
     @PatchMapping("/{id}/deletereservation") // Delete Reservation
     public String deleteReserved(@PathVariable("id") Integer id) {
-        bookDAO.deleteReservation(id);
+        booksService.deleteReservation(id);
 
         return "redirect:/books/{id}";
     }
 
     @PatchMapping("/{id}/addreservation")
     public String addReserved(@PathVariable("id") Integer id,@ModelAttribute("person") Person person) {
-        bookDAO.addReservation(id,person.getUser_id());
+        booksService.addReservation(id,person.getUser_id());
         System.out.println(person.getUser_id()+" "+id);
 
         return "redirect:/books/{id}";
