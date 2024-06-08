@@ -13,7 +13,8 @@ This is a simple CRUD web application for managing book checkouts in a library. 
 ## Technologies Used
 
 - **Spring 6**: Backend framework
-- **Hibernate 6**: Object-Relational Mapping 
+- **Hibernate 6**: Object-Relational Mapping
+- **Spring Data JPA** Abstraction layer for JPA.
 - **Maven**: Dependency management
 - **Thymeleaf**: Template engine for the frontend
 - **PostgreSQL Database**: open-source relational database
