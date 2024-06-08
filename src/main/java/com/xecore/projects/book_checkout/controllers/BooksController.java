@@ -4,12 +4,17 @@ import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
 import com.xecore.projects.book_checkout.services.BooksService;
 import com.xecore.projects.book_checkout.services.PeopleService;
+import com.xecore.projects.book_checkout.utils.Utils;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 @Controller
 @RequestMapping("/books")
@@ -18,6 +23,8 @@ public class BooksController {
     private final BooksService booksService;
     private final PeopleService peopleService;
 
+    private final int PAGE_SIZE = 4;
+
     @Autowired
     public BooksController(BooksService booksService, PeopleService peopleService) {
         this.booksService = booksService;
@@ -25,8 +32,12 @@ public class BooksController {
     }
 
     @GetMapping()
-    public String index(Model model) {
-        model.addAttribute("books",booksService.findAllBooks());
+    public String index( @RequestParam(value = "page",required = false) Integer page,
+                         @RequestParam(value = "sort_by_year",required = false) boolean sortByYear,
+                         Model model) {
+        if (page == null) page = 0;
+        model.addAttribute("books",booksService.findAllBooks(page,PAGE_SIZE,sortByYear));
+        model.addAttribute("page",page);
 
         return "books/index";
     }
@@ -99,6 +110,19 @@ public class BooksController {
         System.out.println(person.getUser_id()+" "+id);
 
         return "redirect:/books/{id}";
+    }
+
+    @GetMapping("/search")
+    public String getSearch(@ModelAttribute("results") ArrayList<Book> results){
+        return "books/search";
+    }
+
+    @PostMapping("/search")
+    public String search(@ModelAttribute("search") String search, Model model){
+
+        // TODO: Make search logic
+
+        return "redirect:/books/search";
     }
 
 }

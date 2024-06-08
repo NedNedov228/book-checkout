@@ -17,6 +17,8 @@ public class PeopleController {
     private final PeopleService peopleService;
     private final BooksService booksService;
 
+    private final int PAGE_SIZE = 4;
+
     @Autowired
     public PeopleController(PeopleService peopleService, BooksService booksService) {
         this.peopleService = peopleService;
@@ -27,9 +29,10 @@ public class PeopleController {
         return "redirect:/people";
     }
     @GetMapping()
-    public String index(Model model) {
-
-        model.addAttribute("people" , peopleService.findAllPeople());
+    public String index( @RequestParam(value = "page",required = false) Integer page, Model model) {
+        if (page == null) page = 0;
+        model.addAttribute("people" , peopleService.findAllPeople(page, PAGE_SIZE));
+        model.addAttribute("page", page);
 
         return "people/index";
     }

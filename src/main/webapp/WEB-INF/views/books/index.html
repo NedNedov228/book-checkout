@@ -13,7 +13,16 @@
 <br/>
 <hr/>
 
-<a href="/books/new">Create new</a>
+<span><a th:href="@{/books?page={p}(p=${page-1})}"><-</a></span>
+<span><a href="/books/new">Create new</a></span>
+<span><a th:href="@{/books?page={p}(p=${page+1})}">-></a></span>
+
+<span><p th:text='${"Page:"+(page+1)}'></p></span>
+
+<br>
+<br>
+
+<a href="/people">People</a>
 
 </body>
 </html>

@@ -4,6 +4,8 @@ import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
 import com.xecore.projects.book_checkout.repositories.BooksRepository;
 import com.xecore.projects.book_checkout.repositories.PeopleRepository;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +29,17 @@ public class BooksService {
     }
 
 
+    public List<Book> findAllBooks(int page, int size , boolean sortByYear) {
+        if (sortByYear)
+            return booksRepository.findAll(PageRequest.of(page,size,Sort.by("year"))).toList();
+
+        else return booksRepository.findAll(PageRequest.of(page,size)).toList();
+    }
+
     public List<Book> findAllBooks() {
         return booksRepository.findAll();
     }
+
 
 
     public Book findBook(Integer id) {

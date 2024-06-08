@@ -4,6 +4,8 @@ import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
 import com.xecore.projects.book_checkout.repositories.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,9 +23,11 @@ public class PeopleService {
         this.personRepository = personRepository;
     }
 
-
     public List<Person> findAllPeople() {
         return personRepository.findAll();
+    }
+    public List<Person> findAllPeople(int page, int size) {
+        return personRepository.findAll(PageRequest.of(page,size, Sort.by("SNP"))).toList();
     }
 
     public Person findPerson(Integer id) {
