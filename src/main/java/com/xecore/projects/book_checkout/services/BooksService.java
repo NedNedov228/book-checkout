@@ -9,6 +9,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -65,15 +67,19 @@ public class BooksService {
 
     @Transactional
     public void addReservation(int bId, int pId) {
-        Book foundBook = findBook(bId);
+        booksRepository.findById(bId).ifPresent(book -> {book.setOwner(peopleRepository.findById(pId).orElse(null)); book.setTakenAt(new Date());});
 
-        peopleRepository.findById(pId)
-                .ifPresent(foundBook::setOwner);
     }
 
     @Transactional
     public void deleteReservation(int id) {
-        booksRepository.findById(id).ifPresent(book -> {book.setOwner(null);});
+        booksRepository.findById(id).ifPresent(book -> {book.setOwner(null); book.setTakenAt(null);});
+    }
+
+    public List<Book> searchByTitle(String query){
+        if (query == null || query.isEmpty())
+            return new ArrayList<>();
+        return booksRepository.findByTitleStartsWith(query);
     }
 
 }

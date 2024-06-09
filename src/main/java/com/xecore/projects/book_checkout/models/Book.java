@@ -3,6 +3,9 @@ package com.xecore.projects.book_checkout.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 @Entity
 @Table(name="Book")
@@ -25,7 +28,28 @@ public class Book {
     @Min(value=1900)
     private int year;
 
+    @Transient
+    private boolean expired;
 
+    @Column(name = "taken_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date takenAt;
+
+    public Date getTakenAt() {
+        return takenAt;
+    }
+
+    public void setTakenAt(Date takenAt) {
+        this.takenAt = takenAt;
+    }
+
+    public boolean isExpired() {
+        return expired;
+    }
+
+    public void setExpired(boolean expired) {
+        this.expired = expired;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER)  //TODO: Make app working with FetchType.LAZY
     @JoinColumn(name = "user_id",referencedColumnName = "user_id")

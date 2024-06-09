@@ -1,5 +1,7 @@
 package com.xecore.projects.book_checkout.controllers;
 
+import com.xecore.projects.book_checkout.constant.Constant;
+import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
 import com.xecore.projects.book_checkout.services.BooksService;
 import com.xecore.projects.book_checkout.services.PeopleService;
@@ -9,6 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/people")
@@ -61,8 +67,20 @@ public class PeopleController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") Integer id, Model model) {
         Person p = peopleService.findPerson(id);
+        List<Book> books = new ArrayList<>();
+
+        for (Book b : booksService.findByOwner(p)){
+            if(b.getTakenAt()!=null)
+                if(Math.abs(b.getTakenAt().getTime()- (new Date().getTime())) > Constant.EXPIRATION_DATE){
+                    b.setExpired(true);
+                }
+            else b.setExpired(false);
+
+            books.add(b);
+        }
+
         model.addAttribute("person", p);
-        model.addAttribute("books", booksService.findByOwner(p));
+        model.addAttribute("books", books);
 
         return "people/show";
     }

@@ -1,5 +1,6 @@
 package com.xecore.projects.book_checkout.controllers;
 
+import com.xecore.projects.book_checkout.constant.Constant;
 import com.xecore.projects.book_checkout.models.Book;
 import com.xecore.projects.book_checkout.models.Person;
 import com.xecore.projects.book_checkout.services.BooksService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/books")
@@ -22,8 +24,6 @@ public class BooksController {
 
     private final BooksService booksService;
     private final PeopleService peopleService;
-
-    private final int PAGE_SIZE = 4;
 
     @Autowired
     public BooksController(BooksService booksService, PeopleService peopleService) {
@@ -36,7 +36,7 @@ public class BooksController {
                          @RequestParam(value = "sort_by_year",required = false) boolean sortByYear,
                          Model model) {
         if (page == null) page = 0;
-        model.addAttribute("books",booksService.findAllBooks(page,PAGE_SIZE,sortByYear));
+        model.addAttribute("books",booksService.findAllBooks(page, Constant.PAGE_SIZE ,sortByYear));
         model.addAttribute("page",page);
 
         return "books/index";
@@ -113,16 +113,16 @@ public class BooksController {
     }
 
     @GetMapping("/search")
-    public String getSearch(@ModelAttribute("results") ArrayList<Book> results){
+    public String getSearch(){
         return "books/search";
     }
 
     @PostMapping("/search")
-    public String search(@ModelAttribute("search") String search, Model model){
+    public String makeSearch(Model model, @RequestParam("query") String query){
 
-        // TODO: Make search logic
+        model.addAttribute("results", booksService.searchByTitle(query));
 
-        return "redirect:/books/search";
+        return "/books/search";
     }
 
 }

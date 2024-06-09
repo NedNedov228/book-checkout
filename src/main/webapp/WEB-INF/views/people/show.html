@@ -17,7 +17,8 @@
     <hr/>
     <h2>Reserved Books:</h2>
     <div th:each="book : ${books}">
-        <p th:text="${book.getTitle()}"></p>
+        <p th:text='${book.getTitle()}'></p>
+        <span> <p th:text='${book.isExpired() ? "  < EXPIRED >" : ""}'></p> </span>
     </div>
     <hr/>
 </div>
