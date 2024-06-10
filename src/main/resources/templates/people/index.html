@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>All People</title>
+</head>
+<body>
+
+<div th:each="person : ${people}">
+    <a th:href="@{/people/{id}(id=${person.getUser_id()})}" th:text="${person.getSNP()}">USER</a>
+</div>
+
+<br/>
+<hr/>
+
+<span><a th:href="@{/people?page={p}(p=${page-1})}"><-</a></span>
+<a href="/people/new">Create new</a>
+<span><a th:href="@{/people?page={p}(p=${page+1})}">-></a></span>
+
+<span><p th:text='${"Page:"+(page+1)}'></p></span>
+
+
+<br>
+<br>
+
+<a href="/books">Books</a>
+
+</body>
+</html>

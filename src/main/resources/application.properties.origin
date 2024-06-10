@@ -1,0 +1,14 @@
+spring.application.name=book_checkout
+
+# Datasource Configuration
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+
+# Hibernate Configuration
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.show_sql=true
+
+# Enable hidden HTTP methods PUT, PATCH, DELETE
+spring.mvc.hiddenmethod.filter.enabled=true

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>New Person</title>
+</head>
+<body>
+
+<form  th:method = "POST" th:action = "@{/people}" th:object="${person}">
+    <label for="SNP">Enter Full Name:</label>
+    <input type="text" th:field="*{SNP}" id = "SNP">
+    <div style="color:red" th:if="${#fields.hasErrors('SNP')}" th:errors="*{SNP}">ERROR</div>
+    <br/>
+    <label for="birth_year">Enter birth year:</label>
+    <input type="text" th:field="*{birth_year}" id = "birth_year">
+    <div style="color:red" th:if="${#fields.hasErrors('birth_year')}" th:errors="*{birth_year}">ERROR</div>
+    <br/>
+    <label for="email">Enter email:</label>
+    <input type="text" th:field="*{email}" id = "email">
+    <div style="color:red" th:if="${#fields.hasErrors('email')}" th:errors="*{email}">ERROR</div>
+
+
+    <br/>
+
+    <input type="submit" value="Create!">
+</form>
+</body>
+</html>
