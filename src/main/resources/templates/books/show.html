@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Person</title>
+</head>
+<body>
+
+<p th:text="${book.getTitle()}">Title</p>
+<p th:text="${book.getAuthor_name()}">AGE</p>
+<p th:text="${book.getYear()}">EMAIL</p>
+<p th:text="${book.getBook_id()}">ID</p>
+
+<div th:if="${owner!=null}">
+<!--    <div>-->
+    <hr>
+    <p>Book is now reserved by</p>
+    <p th:text="${owner.getSNP()}"></p>
+    <form th:method="PATCH" th:action="@{/books/{id}/deletereservation(id=${book.getBook_id()})}">
+        <input type="submit" value="Delete Reservation"/>
+    </form>
+    <hr/>
+</div>
+<div th:if="${owner==null}">
+    <h3>This book is not reserved.</h3>
+    <p>Assign reservation to: </p>
+    <form th:method="PATCH" th:action="@{/books/{id}/addreservation(id=${book.getBook_id()})}">
+        <label for="person"></label>
+        <select th:object="${person}" th:field="*{user_id}" id="person">
+            <option th:each="person :${people}" th:value="${person.getUser_id()}" th:text="${person.getSNP()}"></option>
+        </select>
+
+        <input type="submit" value="Assign Book" />
+    </form>
+</div>
+
+<a th:href="@{/books/{id}/edit(id=${book.getBook_id()})}">Edit</a>
+<form th:method="DELETE" th:action="@{/books/{id}(id=${book.getBook_id()})}">
+    <input type="submit" value="Delete"/>
+</form>
+
+</body>
+</html>
