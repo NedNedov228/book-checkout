@@ -41,7 +41,6 @@ spring.datasource.password=
 
 ### Build 
 
-On Linux based
 
 ```shell
 
